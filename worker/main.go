@@ -2,13 +2,10 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 
-	// rd => redis driver
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	rd "github.com/redis/go-redis/v9"
+	rd "github.com/redis/go-redis/v9" // rd => redis driver
 )
 
 var is_dev bool
@@ -35,23 +32,5 @@ func init() {
 }
 
 func main() {
-    server := gin.Default()
-
-    if !is_dev {
-        gin.SetMode(gin.ReleaseMode)
-    }
-
-    server.GET("/classes", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "values": "[\"barbarian\", \"bard\", \"cleric\", \"druid\", \"fighter\", \"monk\", \"paladin\", \"ranger\", \"rogue\", \"sorcerer\", \"warlock\", \"wizard\"]",
-        })
-    })
-
-    server.GET("/sub-classes", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "values": "[\"berserker\", \"champion\", \"devotion\", \"draconic\", \"evocation\", \"fiend\", \"hunter\", \"land\", \"life\", \"lore\", \"open-hand\", \"thief\"]",
-        })
-    })
-
-    log.Fatal(server.Run())
+    ServeForever(is_dev)
 }

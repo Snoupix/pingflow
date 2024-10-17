@@ -1,0 +1,7 @@
+services:
+    redis:
+        build:
+            context: .
+            dockerfile: redis.Dockerfile
+        ports:
+            - "6379:6379"
