@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -8,23 +9,23 @@ import (
 )
 
 func ServeForever(is_dev bool) {
-    server := gin.Default()
+	server := gin.Default()
 
-    if !is_dev {
-        gin.SetMode(gin.ReleaseMode)
-    }
+	if !is_dev {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
-    server.GET("/classes", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "values": "[\"barbarian\", \"bard\", \"cleric\", \"druid\", \"fighter\", \"monk\", \"paladin\", \"ranger\", \"rogue\", \"sorcerer\", \"warlock\", \"wizard\"]",
-        })
-    })
+	server.GET("/classes", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"values": "[\"barbarian\", \"bard\", \"cleric\", \"druid\", \"fighter\", \"monk\", \"paladin\", \"ranger\", \"rogue\", \"sorcerer\", \"warlock\", \"wizard\"]",
+		})
+	})
 
-    server.GET("/sub-classes", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{
-            "values": "[\"berserker\", \"champion\", \"devotion\", \"draconic\", \"evocation\", \"fiend\", \"hunter\", \"land\", \"life\", \"lore\", \"open-hand\", \"thief\"]",
-        })
-    })
+	server.GET("/sub-classes", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"values": "[\"berserker\", \"champion\", \"devotion\", \"draconic\", \"evocation\", \"fiend\", \"hunter\", \"land\", \"life\", \"lore\", \"open-hand\", \"thief\"]",
+		})
+	})
 
-    log.Fatal(server.Run())
+	log.Fatal(server.Run(fmt.Sprintf("%s:%s", getEnv("WORKER_ADDR"), getEnv("WORKER_PORT"))))
 }

@@ -3,16 +3,14 @@ services:
         build:
             context: .
             dockerfile: redis.Dockerfile
-        ports:
-            - "6379:6379"
         # volumes:
         #     - redis:/data
     worker:
         build:
             context: ./worker
-        ports:
-            - "8080:8080"
-        env_file: .env.public
+        env_file:
+            - .env.public
+            - .env
 
 # For data persistence
 # volumes:

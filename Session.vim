@@ -16,25 +16,31 @@ endif
 badd +6 frontend/src/App.vue
 badd +10 frontend/package.json
 badd +9 frontend/src/components/HelloWorld.vue
-badd +7 frontend/vite.config.ts
+badd +6 frontend/vite.config.ts
 badd +10 frontend/.prettierrc
 badd +11 frontend/src/main.ts
 badd +13 frontend/src/stores.ts
-badd +1 backend/main.ts
+badd +5 backend/main.ts
 badd +4 backend/deno.json
-badd +7 redis.Dockerfile
-badd +1 redis.conf
-badd +16 docker-compose.yml
+badd +6 redis.Dockerfile
+badd +1054 redis.conf
+badd +15 docker-compose.yml
 badd +10 .gitignore
-badd +12 worker/main.go
-badd +4 .env
+badd +23 worker/main.go
 badd +6 worker/Dockerfile
 badd +1 frontend/env.d.ts
+badd +5 .env.public
+badd +10 README.md
+badd +29 worker/http_server.go
+badd +16 Justfile
+badd +4 docker-compose-dev.yml
+badd +30 worker/redis.go
+badd +1 .env
 argglobal
 %argdel
 edit worker/main.go
 argglobal
-balt backend/main.ts
+balt redis.conf
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -45,12 +51,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 12 - ((11 * winheight(0) + 27) / 55)
+let s:l = 23 - ((22 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 12
-normal! 0
+keepjumps 23
+normal! 040|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
