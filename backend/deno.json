@@ -1,0 +1,8 @@
+{
+	"tasks": {
+		"dev": "deno run -RE --watch main.ts",
+		"format": "npx prettier . --write"
+	},
+	"imports": { "prettier": "npm:prettier@^3.3.3" },
+	"nodeModulesDir": true
+}
