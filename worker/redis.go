@@ -21,7 +21,7 @@ func RedisDefault() Redis {
 	}
 }
 
-func (r *Redis) set(client *rd.Client) {
+func (r *Redis) Set(client *rd.Client) {
 	if r.client != nil {
 		panic("Unexpected error: Trying to re-initialize a Redis instance")
 	}
@@ -29,21 +29,21 @@ func (r *Redis) set(client *rd.Client) {
 	r.client = client
 }
 
-// Important: Don't forget to defer/use .unlock() !
-func (r *Redis) get() *rd.Client {
+// Important: Don't forget to defer/use .Unlock() !
+func (r *Redis) Get() *rd.Client {
 	r.mutex.Lock()
 
 	return r.client
 }
 
-// Defer this function when accessing the wrapped inner value with .get() to unlock the Mutex guard
-func (r *Redis) unlock() {
+// Defer this function when accessing the wrapped inner value with .Get() to unlock the Mutex guard
+func (r *Redis) Unlock() {
 	r.mutex.Unlock()
 }
 
-func (r *Redis) subscribe(ctx context.Context, channel string) *rd.PubSub {
-	client := r.get()
-	defer r.unlock()
+func (r *Redis) Subscribe(ctx context.Context, channel string) *rd.PubSub {
+	client := r.Get()
+	defer r.Unlock()
 	sub := client.Subscribe(ctx, channel)
 
 	iface, err := sub.Receive(ctx)
@@ -62,9 +62,9 @@ func (r *Redis) subscribe(ctx context.Context, channel string) *rd.PubSub {
 	return sub
 }
 
-func (r *Redis) publish(ctx context.Context, channel string, message string) error {
-	client := r.get()
-	defer r.unlock()
+func (r *Redis) Publish(ctx context.Context, channel string, message string) error {
+	client := r.Get()
+	defer r.Unlock()
 
 	if err := client.Publish(ctx, channel, message).Err(); err != nil {
 		return err

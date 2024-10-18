@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"worker/utils"
 )
 
 func ServeForever() {
@@ -28,8 +30,8 @@ func ServeForever() {
 	})
 
 	server.GET("/job-index", func(c *gin.Context) {
-		c.String(http.StatusOK, "%03d", new_job_idx())
+		c.String(http.StatusOK, "%03d", utils.NewWorkIdx())
 	})
 
-	log.Fatal(server.Run(fmt.Sprintf("%s:%s", get_env("WORKER_ADDR"), get_env("WORKER_PORT"))))
+	log.Fatal(server.Run(fmt.Sprintf("%s:%s", utils.GetEnv("WORKER_ADDR"), utils.GetEnv("WORKER_PORT"))))
 }
