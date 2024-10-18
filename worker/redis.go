@@ -29,7 +29,7 @@ func (r *Redis) set(client *rd.Client) {
 	r.client = client
 }
 
-// Important: Don't forget to defer .unlock() !
+// Important: Don't forget to defer/use .unlock() !
 func (r *Redis) get() *rd.Client {
 	r.mutex.Lock()
 
@@ -41,7 +41,7 @@ func (r *Redis) unlock() {
 	r.mutex.Unlock()
 }
 
-func (r *Redis) subscribe(ctx context.Context, channel string) <-chan *rd.Message {
+func (r *Redis) subscribe(ctx context.Context, channel string) *rd.PubSub {
 	client := r.get()
 	defer r.unlock()
 	sub := client.Subscribe(ctx, channel)
@@ -59,7 +59,7 @@ func (r *Redis) subscribe(ctx context.Context, channel string) <-chan *rd.Messag
 		log.Fatalf("Unexpected result (%s) on channel (%s) subscription. It shouldn't return anything else than SUBSCRIBE\n", iface, channel)
 	}
 
-	return sub.Channel()
+	return sub
 }
 
 func (r *Redis) publish(ctx context.Context, channel string, message string) error {

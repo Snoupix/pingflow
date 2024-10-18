@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ServeForever(is_dev bool) {
+func ServeForever() {
 	server := gin.Default()
 
 	if !is_dev {
@@ -27,5 +27,9 @@ func ServeForever(is_dev bool) {
 		})
 	})
 
-	log.Fatal(server.Run(fmt.Sprintf("%s:%s", getEnv("WORKER_ADDR"), getEnv("WORKER_PORT"))))
+	server.GET("/job-index", func(c *gin.Context) {
+		c.String(http.StatusOK, "%03d", new_job_idx())
+	})
+
+	log.Fatal(server.Run(fmt.Sprintf("%s:%s", get_env("WORKER_ADDR"), get_env("WORKER_PORT"))))
 }
