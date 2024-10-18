@@ -11,8 +11,10 @@ import (
 	. "worker/utils"
 )
 
+var ctx = context.Background()
 var is_dev bool
 var redis = RedisDefault()
+var cache Cache
 
 func init() {
 	is_dev = len(os.Args) == 2 && os.Args[1] == "-dev"
@@ -27,11 +29,13 @@ func init() {
 		Addr:     GetEnv("REDIS_ADDR"),
 		Password: GetEnv("REDIS_PASSWORD"),
 	}))
+
+	if err := cache.Load(ctx, &redis); err != nil {
+		log.Fatalf("Failed to load cache from Redis: %s\n", err)
+	}
 }
 
 func main() {
-	ctx := context.Background()
-
 	go func() {
 		pubsub := redis.Subscribe(ctx, GetEnv("REDIS_CH_WORK_PROCESS"))
 		defer pubsub.Close()
