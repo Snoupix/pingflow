@@ -1,6 +1,6 @@
 # DnD Class viewer
 
-Dungeon and Dragons class and sub-class viewer
+Dungeon and Dragons class and sub-class viewer using [this free no-auth API](https://5e-bits.github.io/docs/api/).
 
 ## Context
 
