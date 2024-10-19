@@ -17,7 +17,9 @@ var is_dev bool
 var redis = RedisDefault()
 var cache Cache
 
-func init() {
+func main() {
+	httpclient := http.Client{}
+
 	is_dev = len(os.Args) == 2 && os.Args[1] == "-dev"
 
 	if is_dev {
@@ -34,10 +36,6 @@ func init() {
 	if err := cache.Load(ctx, &redis); err != nil {
 		log.Fatalf("Failed to load cache from Redis: %s\n", err)
 	}
-}
-
-func main() {
-	httpclient := http.Client{}
 
 	go func() {
 		pubsub := redis.Subscribe(ctx, GetEnv("REDIS_CH_WORK_PROCESS"))

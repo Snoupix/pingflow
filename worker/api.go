@@ -8,6 +8,7 @@ import (
 )
 
 const API_BASE_URL = "https://www.dnd5eapi.co"
+const API_RESOURCES = "/api"
 const CLASS_BY_IDX = "/api/classes"
 const SUBCLASS_BY_IDX = "/api/subclasses"
 
@@ -27,6 +28,7 @@ func FetchEndpoint(ctx context.Context, httpclient *http.Client, config WorkConf
 	if err != nil {
 		log.Fatalf("Could not send request: %s", err)
 	}
+	defer resp.Body.Close()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -41,7 +43,7 @@ func FetchEndpoint(ctx context.Context, httpclient *http.Client, config WorkConf
 func ParseEndpoint(config WorkConfig) (string, bool) {
 	// Potential attack vector; TODO: sanitize end result
 	switch config.endpoint {
-	case CLASS_BY_IDX, SUBCLASS_BY_IDX:
+	case API_RESOURCES, CLASS_BY_IDX, SUBCLASS_BY_IDX:
 		return config.endpoint + "/" + config.parameters, true
 	}
 
