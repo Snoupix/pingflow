@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -36,23 +37,16 @@ func init() {
 }
 
 func main() {
+	httpclient := http.Client{}
+
 	go func() {
 		pubsub := redis.Subscribe(ctx, GetEnv("REDIS_CH_WORK_PROCESS"))
 		defer pubsub.Close()
 
 		for message := range pubsub.Channel() {
-			go ProcessWork(message.Payload)
+			go ProcessWork(ctx, &httpclient, message.Payload)
 		}
 	}()
 
 	ServeForever()
-}
-
-func ProcessWork(s string) {
-	// GET config data via REDIS_WORK_PROCESS
-	// DEL the key
-	// process
-	// SET REDIS_WORK_RESULT process_data
-	log.Println(s)
-	panic("unimplemented")
 }

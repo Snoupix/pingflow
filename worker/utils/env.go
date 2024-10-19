@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-var env_cache map[string]string
+var env_cache = map[string]string{}
 
 func GetEnv(key string) string {
     if value, ok := env_cache[key]; ok {

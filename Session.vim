@@ -26,21 +26,27 @@ badd +6 redis.Dockerfile
 badd +1054 redis.conf
 badd +15 docker-compose.yml
 badd +10 .gitignore
-badd +23 worker/main.go
+badd +43 worker/main.go
 badd +6 worker/Dockerfile
 badd +1 frontend/env.d.ts
-badd +5 .env.public
+badd +11 .env.public
 badd +10 README.md
-badd +29 worker/http_server.go
+badd +20 worker/http_server.go
 badd +16 Justfile
 badd +4 docker-compose-dev.yml
-badd +30 worker/redis.go
+badd +40 worker/redis.go
 badd +1 .env
+badd +35 worker/api.go
+badd +9 worker/utils/env.go
+badd +12 worker/utils/work_index.go
+badd +2 .ignore
+badd +28 worker/cache.go
+badd +15 worker/processing.go
 argglobal
 %argdel
-edit worker/main.go
+edit worker/processing.go
 argglobal
-balt redis.conf
+balt worker/main.go
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -51,12 +57,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 23 - ((22 * winheight(0) + 27) / 55)
+let s:l = 15 - ((14 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 23
-normal! 040|
+keepjumps 15
+normal! 0
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

@@ -1,8 +1,12 @@
 package main
 
-import "context"
+import (
+	"context"
 
-const CACHE_KEY = "cache" // Only used by the worker
+	rd "github.com/redis/go-redis/v9" // rd => redis driver
+)
+
+const CACHE_KEY = "work:cache" // Only used by the worker
 
 type Cache map[string]string // maps Endpoint => JSON parsed Data
 
@@ -21,11 +25,8 @@ func (c *Cache) Load(ctx context.Context, redis *Redis) error {
 	return err
 }
 
-func (c *Cache) Store(ctx context.Context, redis *Redis, key string, value string) error {
-	client := redis.Get()
-	defer redis.Unlock()
-
-	if err := client.HSet(ctx, key, value).Err(); err != nil {
+func (c *Cache) Store(ctx context.Context, client *rd.Client, key string, value string) error {
+	if err := client.HSet(ctx, CACHE_KEY, key, value).Err(); err != nil {
 		return err
 	}
 
