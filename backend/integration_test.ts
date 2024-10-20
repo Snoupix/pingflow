@@ -53,7 +53,7 @@ Deno.test("Worker input to output", { sanitizeResources: false }, async t => {
 	);
 	const job_idx = await resp.text();
 
-    assertNotEquals(job_idx.length, 0, "/job-index response shouldn't be empty");
+	assertNotEquals(job_idx.length, 0, "/job-index response shouldn't be empty");
 
 	const config_key = `${process.env[ENV_VARS.REDIS_WORK_PREFIX]}:${job_idx}:${process.env[ENV_VARS.REDIS_WORK_PROCESS]}`;
 	await client.hset(config_key, {
@@ -79,11 +79,11 @@ Deno.test("Worker input to output", { sanitizeResources: false }, async t => {
 	assertNotEquals(result!.trim().length, 0);
 	assertNotEquals(result, "nil");
 
-    client.close();
-    sub_client.close();
+	client.close();
+	sub_client.close();
 
-    assert(client.isClosed);
-    assert(sub_client.isClosed);
+	assert(client.isClosed);
+	assert(sub_client.isClosed);
 
 	// console.log(result);
 });

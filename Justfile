@@ -21,7 +21,13 @@ deno:
 
 deno_test:
     cd {{justfile_dir() / "backend"}} && \
-    deno test --allow-net --allow-env --allow-read --fail-fast
+    deno test --allow-net --allow-env --allow-read --fail-fast --filter Worker
+
+# This is a special test script that runs to debug only
+[doc]
+deno_ws:
+    cd {{justfile_dir() / "backend"}} && \
+    deno test --allow-net --allow-env --allow-read --fail-fast --filter socket.io
 
 # Launches everything with docker compose
 @run-all:
