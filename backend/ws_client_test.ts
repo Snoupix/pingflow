@@ -16,7 +16,7 @@ const ENV_VARS = {
 	WS_RECONNECTION_TIMES: "VITE_WEBSOCKET_RECONNECTION_TIMES",
 };
 
-Deno.test("socket.io client test script", async t => {
+Deno.test("socket.io client test script", { sanitizeResources: false, sanitizeOps: false }, async t => {
 	await t.step("Configuring ENV based on .env* files", () => {
 		for (const path of ["../.env", "../.env.public"]) {
 			const err = dotenv.config({ path, processEnv: process.env as DotenvPopulateInput }).error;
@@ -42,15 +42,16 @@ Deno.test("socket.io client test script", async t => {
 		// ref https://docs.deno.com/runtime/reference/node_apis/#node%3Ahttp
 		const socket = websocket(`${process.env[ENV_VARS.WS_URI]}:${process.env[ENV_VARS.WS_PORT]}`, websocket_options);
 
-        let response = "";
+		let response = "";
 
-        socket.on("connect", () => {
-            socket.send("from client");
-        });
+		socket.on("connect", () => {
+			socket.send("from client");
+			socket.emit("call_api", JSON.stringify({ endpoint: "/api/classes", parameters: "warlock" }));
+		});
 
-		socket.on("message", message => {
-			console.log(message);
-            response = message;
+		socket.on("call_api", result => {
+			// console.log("Result", result);
+			response = result;
 		});
 
 		socket.on("error", err => {
@@ -59,12 +60,12 @@ Deno.test("socket.io client test script", async t => {
 
 		socket.connect();
 
-		await new Promise(resolve => setTimeout(resolve, 2000));
+		await new Promise(resolve => setTimeout(resolve, 750));
 
-        if (response.length == 0) {
-            socket.disconnect();
-            throw new Error("Failed to receive message from server");
-        }
+		if (response.length == 0) {
+			socket.disconnect();
+			throw new Error("Failed to receive message from server in less than 750ms");
+		}
 
 		socket.disconnect();
 	});

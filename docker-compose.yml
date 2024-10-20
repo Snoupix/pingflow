@@ -8,6 +8,8 @@ services:
     worker:
         build:
             context: ./worker
+        depends_on:
+            - redis
         env_file:
             - .env.public
             - .env

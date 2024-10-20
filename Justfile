@@ -6,28 +6,36 @@ tests: worker_test deno_test
 # Launches the woker in debug mode
 worker:
     #!/usr/bin/env bash
-    cd {{justfile_dir() / "worker"}}
+    cd {{ justfile_dir() / "worker" }}
     go fmt > /dev/null 2>&1
     go run . -dev
 
 worker_test:
-    cd {{justfile_dir() / "worker"}} && \
+    cd {{ justfile_dir() / "worker" }} && \
     go test
 
 deno:
-    cd {{justfile_dir() / "backend"}} && \
+    cd {{ justfile_dir() / "backend" }} && \
     deno run format && \
     deno run dev
 
 deno_test:
-    cd {{justfile_dir() / "backend"}} && \
+    cd {{ justfile_dir() / "backend" }} && \
     deno test --allow-net --allow-env --allow-read --fail-fast --filter Worker
 
 # This is a special test script that runs to debug only
 [doc]
 deno_ws:
-    cd {{justfile_dir() / "backend"}} && \
+    cd {{ justfile_dir() / "backend" }} && \
     deno test --allow-net --allow-env --allow-read --fail-fast --filter socket.io
+
+spam_ws:
+    #!/usr/bin/env bash
+    cd {{ justfile_dir() }}
+    for i in $(seq 1 50); do
+        # The $i is not very relevant since it's used in parallel
+        ((just deno_ws > /dev/null 2>&1) || echo "Test #$i failed") &
+    done
 
 # Launches everything with docker compose
 @run-all:

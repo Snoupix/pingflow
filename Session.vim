@@ -20,11 +20,11 @@ badd +6 frontend/vite.config.ts
 badd +10 frontend/.prettierrc
 badd +11 frontend/src/main.ts
 badd +13 frontend/src/stores.ts
-badd +39 backend/main.ts
+badd +7 backend/main.ts
 badd +3 backend/deno.json
 badd +6 redis.Dockerfile
 badd +1054 redis.conf
-badd +15 docker-compose.yml
+badd +12 docker-compose.yml
 badd +10 .gitignore
 badd +2 worker/main.go
 badd +6 worker/Dockerfile
@@ -32,7 +32,7 @@ badd +1 frontend/env.d.ts
 badd +18 .env.public
 badd +10 README.md
 badd +37 worker/http_server.go
-badd +17 Justfile
+badd +23 Justfile
 badd +4 docker-compose-dev.yml
 badd +40 worker/redis.go
 badd +1 .env
@@ -43,11 +43,13 @@ badd +2 .ignore
 badd +28 worker/cache.go
 badd +17 worker/processing.go
 badd +29 worker/integration_test.go
-badd +37 backend/integration_test.ts
+badd +48 backend/integration_test.ts
+badd +48 backend/ws_client_test.ts
 argglobal
 %argdel
 edit backend/main.ts
 argglobal
+balt backend/integration_test.ts
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -58,12 +60,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 36 - ((35 * winheight(0) + 27) / 55)
+let s:l = 6 - ((5 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 36
-normal! 016|
+keepjumps 6
+normal! 010|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -76,6 +78,7 @@ if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
+nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :
