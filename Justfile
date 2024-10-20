@@ -1,12 +1,27 @@
 @_default:
     just -l
 
+tests: worker_test deno_test
+
 # Launches the woker in debug mode
 worker:
     #!/usr/bin/env bash
     cd {{justfile_dir() / "worker"}}
     go fmt > /dev/null 2>&1
     go run . -dev
+
+worker_test:
+    cd {{justfile_dir() / "worker"}} && \
+    go test
+
+deno:
+    cd {{justfile_dir() / "backend"}} && \
+    deno run format && \
+    deno run dev
+
+deno_test:
+    cd {{justfile_dir() / "backend"}} && \
+    deno test --allow-net --allow-env --allow-read --fail-fast
 
 # Launches everything with docker compose
 @run-all:

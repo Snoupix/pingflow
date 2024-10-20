@@ -21,6 +21,7 @@ const (
 	WORKER_PORT           = "WORKER_PORT"
 	REDIS_PORT            = "REDIS_PORT"
 	REDIS_ADDR            = "REDIS_ADDR"
+	REDIS_PASSWORD        = "REDIS_PASSWORD"
 	REDIS_WORK_PREFIX     = "REDIS_WORK_PREFIX"
 	REDIS_WORK_PROCESS    = "REDIS_WORK_PROCESS"
 	REDIS_WORK_RESULT     = "REDIS_WORK_RESULT"
@@ -75,13 +76,16 @@ func initEnv(t *testing.T) {
 }
 
 func fetchJobIndex(t *testing.T, httpclient *http.Client) string {
-	url := fmt.Sprintf("http://%s:%s/job-idx", GetEnv(WORKER_ADDR), GetEnv(WORKER_PORT))
+	url := fmt.Sprintf("http://%s:%s/job-index", GetEnv(WORKER_ADDR), GetEnv(WORKER_PORT))
 	resp, err := httpclient.Get(url)
 	assert.Nil(t, err, fmt.Sprintf("Cannot access the worker REST API /job-idx endpoint %s", url))
 	defer resp.Body.Close()
 
+	assert.Equal(t, resp.StatusCode, 200, "/job-index response status should be 200")
+
 	body, err := io.ReadAll(resp.Body)
 	assert.Nil(t, err, fmt.Sprintf("Cannot parse the /job-idx response body %s", err))
+	assert.NotEmpty(t, body, "/job-index shouldn't be empty")
 
 	return string(body)
 }
@@ -96,8 +100,8 @@ func TestWorker(t *testing.T) {
 	job_idx := fetchJobIndex(t, &httpclient)
 
 	redis.Set(rd.NewClient(&rd.Options{
-		Addr:     GetEnv("REDIS_ADDR"),
-		Password: GetEnv("REDIS_PASSWORD"),
+		Addr:     fmt.Sprintf("%s:%s", GetEnv(REDIS_ADDR), GetEnv(REDIS_PORT)),
+		Password: GetEnv(REDIS_PASSWORD),
 	}))
 
 	client := redis.Get()
@@ -144,6 +148,6 @@ func TestWorker(t *testing.T) {
 
 	assert.NotEqual(t, len(result), 0, "Work result string shouldn't be empty")
 
-    // For visually debugging
+	// For visual debug
 	// fmt.Println(result)
 }

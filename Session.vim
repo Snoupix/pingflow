@@ -20,33 +20,35 @@ badd +6 frontend/vite.config.ts
 badd +10 frontend/.prettierrc
 badd +11 frontend/src/main.ts
 badd +13 frontend/src/stores.ts
-badd +5 backend/main.ts
-badd +4 backend/deno.json
+badd +29 backend/main.ts
+badd +3 backend/deno.json
 badd +6 redis.Dockerfile
 badd +1054 redis.conf
 badd +15 docker-compose.yml
 badd +10 .gitignore
-badd +43 worker/main.go
+badd +2 worker/main.go
 badd +6 worker/Dockerfile
 badd +1 frontend/env.d.ts
-badd +11 .env.public
+badd +10 .env.public
 badd +10 README.md
-badd +20 worker/http_server.go
-badd +16 Justfile
+badd +37 worker/http_server.go
+badd +17 Justfile
 badd +4 docker-compose-dev.yml
 badd +40 worker/redis.go
 badd +1 .env
-badd +35 worker/api.go
-badd +9 worker/utils/env.go
+badd +11 worker/api.go
+badd +24 worker/utils/env.go
 badd +12 worker/utils/work_index.go
 badd +2 .ignore
 badd +28 worker/cache.go
-badd +15 worker/processing.go
+badd +17 worker/processing.go
+badd +29 worker/integration_test.go
+badd +37 backend/integration_test.ts
 argglobal
 %argdel
-edit worker/processing.go
+edit backend/main.ts
 argglobal
-balt worker/main.go
+balt backend/integration_test.ts
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -57,11 +59,11 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 15 - ((14 * winheight(0) + 27) / 55)
+let s:l = 29 - ((28 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 15
+keepjumps 29
 normal! 0
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'

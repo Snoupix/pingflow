@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -29,7 +30,7 @@ func main() {
 	}
 
 	redis.Set(rd.NewClient(&rd.Options{
-		Addr:     GetEnv("REDIS_ADDR"),
+		Addr:     fmt.Sprintf("%s:%s", GetEnv("REDIS_ADDR"), GetEnv("REDIS_PORT")),
 		Password: GetEnv("REDIS_PASSWORD"),
 	}))
 
