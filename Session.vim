@@ -13,8 +13,8 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +74 backend/main.ts
-badd +3 backend/deno.json
+badd +24 backend/main.ts
+badd +5 backend/deno.json
 badd +6 redis.Dockerfile
 badd +1054 redis.conf
 badd +12 docker-compose.yml
@@ -24,7 +24,7 @@ badd +6 worker/Dockerfile
 badd +18 .env.public
 badd +10 README.md
 badd +37 worker/http_server.go
-badd +35 Justfile
+badd +32 Justfile
 badd +4 docker-compose-dev.yml
 badd +40 worker/redis.go
 badd +1 .env
@@ -36,21 +36,21 @@ badd +28 worker/cache.go
 badd +17 worker/processing.go
 badd +29 worker/integration_test.go
 badd +48 backend/integration_test.ts
-badd +7 backend/ws_client_test.ts
+badd +29 backend/ws_client_test.ts
 badd +20 frontend/vite.config.ts
-badd +1 frontend/src/main.ts
-badd +29 frontend/src/stores/websocket.ts
+badd +6 frontend/src/main.ts
+badd +4 frontend/src/stores/websocket.ts
 badd +1 frontend/src/stores/counter.ts
 badd +1 frontend/package.json
-badd +2 frontend/src/App.vue
-badd +1 frontend/src/components/NavBar.vue
-badd +2 frontend/src/styles/main.sass
-badd +2 frontend/src/styles/base.sass
+badd +19 frontend/src/App.vue
+badd +6 frontend/src/components/NavBar.vue
+badd +1 frontend/src/styles/main.sass
+badd +25 frontend/src/styles/base.sass
 argglobal
 %argdel
-edit frontend/src/styles/base.sass
+edit frontend/src/stores/websocket.ts
 argglobal
-balt frontend/src/styles/main.sass
+balt backend/main.ts
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -61,12 +61,13 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 2 - ((1 * winheight(0) + 27) / 55)
+let s:l = 4 - ((3 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 2
-normal! 0
+keepjumps 4
+normal! 064|
+lcd ~/work/pingflow
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

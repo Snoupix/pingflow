@@ -37,6 +37,10 @@ spam_ws:
         ((just deno_ws > /dev/null 2>&1) || echo "Test #$i failed") &
     done
 
+vue:
+    cd {{ justfile_dir() / "frontend" }} && \
+    pnpm run dev
+
 # Launches everything with docker compose
 @run-all:
     docker compose build

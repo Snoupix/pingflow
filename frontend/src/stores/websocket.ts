@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+import { ref } from "vue";
 import { defineStore } from "pinia";
 import { io as socketio } from "socket.io-client";
 
@@ -21,32 +21,34 @@ export type IWorkerConfig = {
  */
 export const useWebsocket = defineStore("websocket", () => {
 	const WORKER_API_KEY = "call_api";
-	const websocket = socketio(
+	const websocket = ref(socketio(
 		`${import.meta.env.VITE_WEBSOCKET_URI}:${import.meta.env.VITE_WEBSOCKET_PORT}`,
 		WEBSOCKET_OPTIONS,
-	);
+	));
 
-	websocket.on("error", error => {
-		console.error(`[WS Error]: A websocket error occured: ${error.message}`);
+	websocket.value.on("error", error => {
+		console.error(`[WS Error]: A websocket error occured ${error}`);
 	});
 
-	const ws = reactive(websocket);
-
-	function CallAPI(socket: ReturnType<typeof socketio>, config: IWorkerConfig) {
-		socket.emit(WORKER_API_KEY, config);
+	function CallAPI(config: IWorkerConfig) {
+		websocket.value.emit(WORKER_API_KEY, JSON.stringify(config));
 	}
 
 	// Returns unparsed JSON
-	function ListenForResponse(socket: ReturnType<typeof socketio>): Promise<string> {
+	function ListenForResponse(): Promise<string> {
 		return new Promise(resolve => {
-			socket.on(WORKER_API_KEY, (result: string) => {
-				socket.off(WORKER_API_KEY);
+			websocket.value.on(WORKER_API_KEY, result => {
+				websocket.value.off(WORKER_API_KEY);
 				return resolve(result);
 			});
 		});
 	}
 
-	return { inner: ws, CallAPI, ListenForResponse };
+	function Connect() {
+		websocket.value.connect();
+	}
+
+	return { inner: websocket, CallAPI, ListenForResponse, Connect };
 });
 
 /*

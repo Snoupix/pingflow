@@ -1,7 +1,6 @@
 import process from "node:process";
 import dotenv, { type DotenvPopulateInput } from "npm:dotenv@16.4.5";
 import { Server } from "https://deno.land/x/socket_io@0.2.0/mod.ts";
-import { Encoder, Decoder } from "npm:socket.io-json-parser@3.0.0";
 import { connect as createRedisClient } from "https://deno.land/x/redis@v0.33.0/mod.ts";
 import { serve } from "https://deno.land/std@0.224.0/http/mod.ts";
 import z from "https://deno.land/x/zod@v3.23.8/mod.ts";
@@ -20,14 +19,6 @@ const socket_options: Partial<ServerOptions & EngineOptions> = {
 	cors: {
 		origin: "*",
 		credentials: false,
-	},
-	parser: {
-		createDecoder() {
-			return new Decoder();
-		},
-		createEncoder() {
-			return new Encoder();
-		},
 	},
 };
 let redis_options: RedisConnectOptions;
