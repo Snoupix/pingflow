@@ -1,17 +1,34 @@
 import process from "node:process";
 import dotenv, { type DotenvPopulateInput } from "npm:dotenv@16.4.5";
-import { Server, type ServerOptions } from "https://deno.land/x/socket_io@0.2.0/mod.ts";
-import { connect as createRedisClient, type RedisConnectOptions } from "https://deno.land/x/redis@v0.33.0/mod.ts";
+import { Server } from "https://deno.land/x/socket_io@0.2.0/mod.ts";
+import { Encoder, Decoder } from "npm:socket.io-json-parser@3.0.0";
+import { connect as createRedisClient } from "https://deno.land/x/redis@v0.33.0/mod.ts";
 import { serve } from "https://deno.land/std@0.224.0/http/mod.ts";
 import z from "https://deno.land/x/zod@v3.23.8/mod.ts";
+
+import type { RedisConnectOptions } from "https://deno.land/x/redis@v0.33.0/mod.ts";
+import type { ServerOptions } from "https://deno.land/x/socket_io@0.2.0/mod.ts";
+import type { ServerOptions as EngineOptions } from "https://deno.land/x/socket_io@0.2.0/packages/engine.io/mod.ts";
 
 const IWorkerConfigData = z.object({
 	endpoint: z.string(),
 	parameters: z.string(),
 });
 
-const socket_options: Partial<ServerOptions> = {
+const socket_options: Partial<ServerOptions & EngineOptions> = {
 	connectTimeout: 30_000,
+	cors: {
+		origin: "*",
+		credentials: false,
+	},
+	parser: {
+		createDecoder() {
+			return new Decoder();
+		},
+		createEncoder() {
+			return new Encoder();
+		},
+	},
 };
 let redis_options: RedisConnectOptions;
 
@@ -93,15 +110,13 @@ async function main() {
 
 	const local_addr: Deno.Addr = {
 		transport: "tcp",
-		hostname: process.env.VITE_WEBSOCKET_URI!.replaceAll(/wss*:\/\//g, ""),
+		hostname: "0.0.0.0",
 		port: parseInt(process.env.VITE_WEBSOCKET_PORT!),
 	};
 
-	// Deno.serve({ port: local_addr.port }, async (req, info) => {
-	// 	console.log("req from", info.remoteAddr.hostname, info.remoteAddr.port);
-	// 	const handler = io.handler();
-	// 	return await handler(req, { remoteAddr: info.remoteAddr, localAddr: local_addr });
-	// });
+	// Deno.serve({ port: local_addr.port }, async (req, info) => await handler(req, { localAddr: local_addr, remoteAddr: info.remoteAddr }));
 	// TODO: Fix and replace with above if possible, serve from http stdlib is deprecated
+	// Update on above http server: it works now but socketio doesn't work for client side
+
 	await serve(socketio.handler(), { hostname: local_addr.hostname, port: local_addr.port });
 }
