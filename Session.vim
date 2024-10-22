@@ -13,26 +13,18 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +6 frontend/src/App.vue
-badd +10 frontend/package.json
-badd +9 frontend/src/components/HelloWorld.vue
-badd +6 frontend/vite.config.ts
-badd +10 frontend/.prettierrc
-badd +11 frontend/src/main.ts
-badd +13 frontend/src/stores.ts
-badd +7 backend/main.ts
+badd +74 backend/main.ts
 badd +3 backend/deno.json
 badd +6 redis.Dockerfile
 badd +1054 redis.conf
 badd +12 docker-compose.yml
-badd +10 .gitignore
+badd +25 .gitignore
 badd +2 worker/main.go
 badd +6 worker/Dockerfile
-badd +1 frontend/env.d.ts
 badd +18 .env.public
 badd +10 README.md
 badd +37 worker/http_server.go
-badd +23 Justfile
+badd +35 Justfile
 badd +4 docker-compose-dev.yml
 badd +40 worker/redis.go
 badd +1 .env
@@ -44,12 +36,21 @@ badd +28 worker/cache.go
 badd +17 worker/processing.go
 badd +29 worker/integration_test.go
 badd +48 backend/integration_test.ts
-badd +48 backend/ws_client_test.ts
+badd +7 backend/ws_client_test.ts
+badd +20 frontend/vite.config.ts
+badd +1 frontend/src/main.ts
+badd +29 frontend/src/stores/websocket.ts
+badd +1 frontend/src/stores/counter.ts
+badd +1 frontend/package.json
+badd +2 frontend/src/App.vue
+badd +1 frontend/src/components/NavBar.vue
+badd +2 frontend/src/styles/main.sass
+badd +2 frontend/src/styles/base.sass
 argglobal
 %argdel
-edit backend/main.ts
+edit frontend/src/styles/base.sass
 argglobal
-balt backend/integration_test.ts
+balt frontend/src/styles/main.sass
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -60,12 +61,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 6 - ((5 * winheight(0) + 27) / 55)
+let s:l = 2 - ((1 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 6
-normal! 010|
+keepjumps 2
+normal! 0
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -78,7 +79,6 @@ if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
-nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :
