@@ -41,13 +41,19 @@ vue:
     cd {{ justfile_dir() / "frontend" }} && \
     pnpm run dev
 
+
+
 # Launches everything with docker compose
-@run-all:
-    docker compose build
-    docker compose up -d
+run-all:
+    #!/usr/bin/env bash
+    password=$(cat .env | grep "REDIS_PASSWORD" | grep -oE '".*"' | sed s/\"//g)
+    sed "s/^requirepass.*/requirepass $password/m" -i redis.conf
+    # docker compose up --build --remove-orphans --force-recreate
+    docker compose up --build --remove-orphans
+    sed "s/^requirepass.*/requirepass HIDDEN/m" -i redis.conf
 
 # Uses .env REDIS_PASSWORD as a default user password
-[doc("Launches only Redis with docker compose")]
+[doc("Launches only Redis with docker compose for dev only")]
 redis:
     #!/usr/bin/env bash
     password=$(cat .env | grep "REDIS_PASSWORD" | grep -oE '".*"' | sed s/\"//g)
@@ -58,4 +64,4 @@ redis:
 
 # Alias of docker compose down
 @stop:
-    docker compose down
+    docker compose down --remove-orphans

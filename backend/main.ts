@@ -24,10 +24,12 @@ const socket_options: Partial<ServerOptions & EngineOptions> = {
 let redis_options: RedisConnectOptions;
 
 if (import.meta.main) {
-	for (const path of ["../.env", "../.env.public"]) {
-		const err = dotenv.config({ path, processEnv: process.env as DotenvPopulateInput }).error;
-		if (err != undefined) {
-			throw err;
+	if (process.argv[process.argv.length - 1] != "--prod") {
+		for (const path of ["../.env", "../.env.public"]) {
+			const err = dotenv.config({ path, processEnv: process.env as DotenvPopulateInput }).error;
+			if (err != undefined) {
+				throw err;
+			}
 		}
 	}
 

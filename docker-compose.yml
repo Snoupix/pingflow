@@ -3,6 +3,8 @@ services:
         build:
             context: .
             dockerfile: redis.Dockerfile
+        networks:
+            - internal
         # volumes:
         #     - redis:/data
     worker:
@@ -10,10 +12,37 @@ services:
             context: ./worker
         depends_on:
             - redis
+        networks:
+            - internal
         env_file:
-            - .env.public
+            - .env.docker
             - .env
+    deno:
+        build:
+            context: ./backend
+        depends_on:
+            - redis
+            - worker
+        networks:
+            - internal
+        env_file:
+            - .env.docker
+            - .env
+        ports:
+            - 8081:8081
+    vue:
+        build:
+            context: .
+            dockerfile: ./frontend/Dockerfile
+        networks:
+            - internal
+        ports:
+            - 80:80
 
+
+networks:
+    internal:
+        driver: bridge
 # For data persistence
 # volumes:
 #     redis:
