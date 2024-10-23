@@ -42,20 +42,21 @@ badd +6 frontend/src/main.ts
 badd +51 frontend/src/stores/websocket.ts
 badd +1 frontend/src/stores/counter.ts
 badd +9 frontend/package.json
-badd +57 frontend/src/App.vue
+badd +143 frontend/src/App.vue
 badd +11 frontend/src/components/NavBar.vue
 badd +1 frontend/src/styles/main.sass
-badd +5 frontend/src/styles/base.sass
+badd +37 frontend/src/styles/base.sass
 badd +7 frontend/Dockerfile
 badd +3 frontend/.dockerignore
 badd +1 backend/Dockerfile
 badd +18 .env.docker
-badd +25 frontend/src/types/api.ts
-badd +35 frontend/src/components/ClassComponent.vue
+badd +8 frontend/src/types/api.ts
+badd +79 frontend/src/components/ClassComponent.vue
 argglobal
 %argdel
-edit frontend/src/components/ClassComponent.vue
+edit frontend/src/App.vue
 argglobal
+balt frontend/src/components/ClassComponent.vue
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -66,12 +67,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 35 - ((27 * winheight(0) + 27) / 55)
+let s:l = 92 - ((27 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 35
-normal! 027|
+keepjumps 92
+normal! 0
 lcd ~/work/pingflow
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
@@ -85,7 +86,6 @@ if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
-nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :

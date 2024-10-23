@@ -2,7 +2,8 @@ export type Error = {
 	error: string;
 };
 
-export type API_OUT = Classes | Class;
+export type API_OUT_T = "classes" | "class" | "spells";
+export type API_OUT = Classes | Class | SpellResp;
 
 export type Classes = {
 	count: number;
@@ -24,6 +25,18 @@ export type Class = {
 	subclasses: Proficiency[];
 	spellcasting?: Spellcasting;
 	spells: string;
+	url: string;
+};
+
+export type SpellResp = {
+	count: number;
+	results: Array<Spell>;
+};
+
+export type Spell = {
+	index: string;
+	name: string;
+	level: number;
 	url: string;
 };
 

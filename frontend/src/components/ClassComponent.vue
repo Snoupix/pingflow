@@ -1,10 +1,13 @@
 <script setup lang="ts">
 // import { ref } from 'vue';
 
-import type { Class } from '@/types/api';
+import type { IWorkerConfig } from "@/stores/websocket";
+import type { API_OUT_T, Class, Spell } from "@/types/api";
 
 const props = defineProps<{
-	_class: Class
+	_class: Class;
+	spells: Array<Spell> | null;
+	FetchAPI: (config: IWorkerConfig & { _type: API_OUT_T }) => void;
 }>();
 
 // TODO: subtype
@@ -17,27 +20,28 @@ const props = defineProps<{
 	<section class="class_wrapper">
 		<div class="grid">
 			<template v-if="props._class.spellcasting != undefined">
-				<span>Fetch spells</span>
-				<span>{{ props._class.spells }}</span>
-				<template v-for="{ name, desc }, i in props._class.spellcasting!.info" :key="i">
+				<span>Spells</span>
+				<div>
+					<button @click="props.FetchAPI({ endpoint: props._class.spells, parameters: '', _type: 'spells' })">
+						Fetch spells
+					</button>
+				</div>
+
+				<template v-for="({ name, desc }, i) in props._class.spellcasting!.info" :key="i">
 					<span>{{ name }}</span>
 					<span v-if="desc.length == 1">{{ desc[0] }}</span>
 					<div v-else class="inner-grid">
-						<p v-for="line, i in desc" :key="i">- {{ line }}</p>
+						<p v-for="(line, i) in desc" :key="i">- {{ line }}</p>
 					</div>
 				</template>
 			</template>
 		</div>
-		<!--<button
-			v-for="resp in api_resp.results"
-			:key="resp.index"
-			@click="FetchAPI({ endpoint: resp.url.replace(resp.index, ''), parameters: resp.index })">
-			{{ resp.name }}
-		</button>-->
 	</section>
 </template>
 
 <style scoped lang="scss">
+$border_radius: .5rem;
+
 h2 {
 	width: 100%;
 	text-align: center;
@@ -54,7 +58,7 @@ h2 {
 	padding: 5vh 5vw;
 
 	.grid {
-		border-radius: .5rem;
+		border-radius: $border_radius;
 		display: grid;
 		grid-template-columns: 1fr 6fr;
 		text-align: left;
@@ -65,9 +69,24 @@ h2 {
 			display: flex;
 			justify-content: center;
 			align-items: center;
+
+			button {
+				border: 1px solid var(--color-border);
+				background: var(--color-background-soft);
+				padding: 2vh 5vw;
+				color: var(--color-text);
+				transition: all var(--transition-duration);
+				border-radius: $border_radius;
+
+				&:hover {
+					border: 1px solid var(--color-background-soft);
+					background: var(--color-border);
+				}
+			}
 		}
 
-		> :nth-child(1), > :nth-child(2) {
+		> :nth-child(1),
+		> :nth-child(2) {
 			border-top: none;
 		}
 		> :nth-child(odd) {
@@ -78,7 +97,8 @@ h2 {
 			border-right: none;
 			justify-content: left;
 		}
-		> :nth-last-child(1), > :nth-last-child(2) {
+		> :nth-last-child(1),
+		> :nth-last-child(2) {
 			border-bottom: none;
 		}
 
