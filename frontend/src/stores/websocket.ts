@@ -54,7 +54,8 @@ export const useWebsocket = defineStore("websocket", () => {
 				try {
 					const json = JSON.parse(result);
 					if (json.error) {
-						if (json.error == "timeout") { // TODO: Impl retry
+						if (json.error == "timeout") {
+							// TODO: Impl retry
 							return reject(json as APIError);
 						}
 

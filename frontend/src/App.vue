@@ -115,7 +115,8 @@ function RemoveError() {
 </template>
 
 <style scoped lang="scss">
-h1, h2 {
+h1,
+h2 {
 	width: 100%;
 	text-align: center;
 	padding: 5vh 0;

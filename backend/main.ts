@@ -77,50 +77,50 @@ async function main() {
 
 	// Receive from Worker
 	(async () => {
-        const work_chan = process.env.REDIS_CH_WORK_RESULT!;
-        const color_chan = process.env.REDIS_CH_COLOR_RESULT!;
+		const work_chan = process.env.REDIS_CH_WORK_RESULT!;
+		const color_chan = process.env.REDIS_CH_COLOR_RESULT!;
 		const chan = await sub_client.subscribe(work_chan, color_chan);
 
-        let error = "";
+		let error = "";
 
 		outer: for await (const { message, channel } of chan.receive()) {
-            switch (channel) {
-            case work_chan: {
-                const result = await client.get(message);
-                if (!result || result.length == 0) {
-                    socketio.emit("call_api", JSON.stringify({ "error": "timeout" }));
-                    break;
-                }
+			switch (channel) {
+				case work_chan: {
+					const result = await client.get(message);
+					if (!result || result.length == 0) {
+						socketio.emit("call_api", JSON.stringify({ error: "timeout" }));
+						break;
+					}
 
-                socketio.emit("call_api", result);
-                break;
-            }
-            case color_chan: {
-                socketio.emit("color", message);
-                break;
-            }
-            default:
-                error = `Unreachable: I'm a teapot. Subscribe error channel: ${channel} message: ${message}`;
-                break outer;
-            }
+					socketio.emit("call_api", result);
+					break;
+				}
+				case color_chan: {
+					socketio.emit("color", message);
+					break;
+				}
+				default:
+					error = `Unreachable: I'm a teapot. Subscribe error channel: ${channel} message: ${message}`;
+					break outer;
+			}
 		}
 
 		await chan.unsubscribe(work_chan, color_chan);
 		chan.close();
-        throw error;
+		throw error;
 	})();
 
-    // Basic scheduler
-    const scheduler = setInterval(() => {
-        (async () => {
-            await client.publish(process.env.REDIS_CH_COLOR_PROCESS!, "");
-        })();
-    }, 2000);
+	// Basic scheduler
+	const scheduler = setInterval(() => {
+		(async () => {
+			await client.publish(process.env.REDIS_CH_COLOR_PROCESS!, "");
+		})();
+	}, 2000);
 
 	console.log("Press Ctrl-C or send SIGINT to gracefully close the server");
 
 	Deno.addSignalListener("SIGINT", () => {
-        clearInterval(scheduler);
+		clearInterval(scheduler);
 		socketio.close();
 		client.close();
 		sub_client.close();

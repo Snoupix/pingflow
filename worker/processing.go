@@ -18,9 +18,9 @@ type WorkConfig struct {
 }
 
 type ColorOut struct {
-    R uint8 `json:"r"`
-    G uint8 `json:"g"`
-    B uint8 `json:"b"`
+	R uint8 `json:"r"`
+	G uint8 `json:"g"`
+	B uint8 `json:"b"`
 }
 
 func ProcessWork(ctx context.Context, httpclient *http.Client, work_id string) {
@@ -60,12 +60,12 @@ func ProcessWork(ctx context.Context, httpclient *http.Client, work_id string) {
 			// the same request has the same result
 			cache.Store(ctx, client, config.endpoint+config.parameters, output)
 		} else {
-            // TODO: Handle http fetch error
-        }
+			// TODO: Handle http fetch error
+		}
 	}
 
 	result_key := fmt.Sprintf("%s:%s:%s", utils.GetEnv("REDIS_WORK_PREFIX"), work_id, utils.GetEnv("REDIS_WORK_RESULT"))
-	client.Set(ctx, result_key, output, time.Second * 30)
+	client.Set(ctx, result_key, output, time.Second*30)
 
 	client.Publish(ctx, utils.GetEnv("REDIS_CH_WORK_RESULT"), result_key)
 }
@@ -74,15 +74,15 @@ func ProcessColor(ctx context.Context, httpclient *http.Client) {
 	client := redis.Get()
 	defer redis.Unlock()
 
-    // Values between 100 and 255 for more brightness
+	// Values between 100 and 255 for more brightness
 	r := uint8(rand.Intn(156) + 100)
 	g := uint8(rand.Intn(156) + 100)
 	b := uint8(rand.Intn(156) + 100)
 
-    data, err := json.Marshal(ColorOut { r, g, b })
-    if err != nil {
-        log.Fatalf("Unreachable JSON color parsing")
-    }
+	data, err := json.Marshal(ColorOut{r, g, b})
+	if err != nil {
+		log.Fatalf("Unreachable JSON color parsing")
+	}
 
 	client.Publish(ctx, utils.GetEnv("REDIS_CH_COLOR_RESULT"), string(data))
 }

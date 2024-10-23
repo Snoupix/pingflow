@@ -41,6 +41,14 @@ vue:
     cd {{ justfile_dir() / "frontend" }} && \
     pnpm run dev
 
+@format-all:
+    cd {{ justfile_dir() / "worker" }} && \
+    go fmt
+    cd {{ justfile_dir() / "backend" }} && \
+    deno run format
+    cd {{ justfile_dir() / "frontend" }} && \
+    pnpm run format
+
 
 
 # Launches everything with docker compose

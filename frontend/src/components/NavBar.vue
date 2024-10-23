@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 
-import type { IColor } from '@/stores/websocket';
+import type { IColor } from "@/stores/websocket";
 
 const animation_str = "move-gradient 1.75s cubic-bezier(.79,.14,.15,.86) infinite";
 
@@ -12,7 +12,10 @@ const props = defineProps<{
 
 const previous_color = ref<IColor | null>(null);
 
-watch(() => props.color, (_, prev) => previous_color.value = prev);
+watch(
+	() => props.color,
+	(_, prev) => (previous_color.value = prev),
+);
 
 function ParseColor(c: IColor): string {
 	return `rgb(${c.r}, ${c.g}, ${c.b})`;
@@ -28,7 +31,13 @@ function GetGradient(c: IColor): string {
 
 <template>
 	<nav>
-		<h2 :style="{ background: props.color != null ? GetGradient(props.color) : 'var(--color-text)', animation: props.color != null ? animation_str : '' }">Dungeons & Dragons Classes viewer</h2>
+		<h2
+			:style="{
+				background: props.color != null ? GetGradient(props.color) : 'var(--color-text)',
+				animation: props.color != null ? animation_str : '',
+			}">
+			Dungeons & Dragons Classes viewer
+		</h2>
 		<div class="status_wrapper">
 			<span>Status: <span v-if="props.ws_state">Connected</span><span v-else>Disconnected</span></span>
 			<div class="ws_status" :class="{ active: props.ws_state }"></div>
@@ -40,7 +49,7 @@ function GetGradient(c: IColor): string {
 h2 {
 	color: transparent;
 	background-size: 200%;
-	background-clip: text!important;
+	background-clip: text !important;
 }
 
 nav {

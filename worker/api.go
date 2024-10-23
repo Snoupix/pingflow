@@ -43,7 +43,7 @@ func FetchEndpoint(ctx context.Context, httpclient *http.Client, config WorkConf
 // Otherwise, it returns the parsed endpoint without the base and true
 func ParseEndpoint(config WorkConfig) (string, bool) {
 	// Potential attack vector; TODO: sanitize end result
-    config.endpoint = strings.TrimSuffix(config.endpoint, "/")
+	config.endpoint = strings.TrimSuffix(config.endpoint, "/")
 
 	switch config.endpoint {
 	case API_RESOURCES, CLASSES, SUBCLASSES:

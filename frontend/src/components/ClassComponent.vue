@@ -40,7 +40,7 @@ const props = defineProps<{
 </template>
 
 <style scoped lang="scss">
-$border_radius: .5rem;
+$border_radius: 0.5rem;
 
 h2 {
 	color: var(--color-text);
