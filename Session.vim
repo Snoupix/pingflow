@@ -23,12 +23,12 @@ badd +39 worker/main.go
 badd +6 worker/Dockerfile
 badd +19 .env.public
 badd +10 README.md
-badd +36 worker/http_server.go
-badd +53 Justfile
+badd +19 worker/http_server.go
+badd +44 Justfile
 badd +4 docker-compose-dev.yml
 badd +40 worker/redis.go
 badd +1 .env
-badd +13 worker/api.go
+badd +14 worker/api.go
 badd +24 worker/utils/env.go
 badd +12 worker/utils/work_index.go
 badd +2 .ignore
@@ -39,22 +39,23 @@ badd +48 backend/integration_test.ts
 badd +53 backend/ws_client_test.ts
 badd +10 frontend/vite.config.ts
 badd +6 frontend/src/main.ts
-badd +24 frontend/src/stores/websocket.ts
+badd +51 frontend/src/stores/websocket.ts
 badd +1 frontend/src/stores/counter.ts
 badd +9 frontend/package.json
-badd +15 frontend/src/App.vue
+badd +57 frontend/src/App.vue
 badd +11 frontend/src/components/NavBar.vue
 badd +1 frontend/src/styles/main.sass
-badd +4 frontend/src/styles/base.sass
+badd +5 frontend/src/styles/base.sass
 badd +7 frontend/Dockerfile
 badd +3 frontend/.dockerignore
 badd +1 backend/Dockerfile
 badd +18 .env.docker
+badd +25 frontend/src/types/api.ts
+badd +35 frontend/src/components/ClassComponent.vue
 argglobal
 %argdel
-edit Justfile
+edit frontend/src/components/ClassComponent.vue
 argglobal
-balt docker-compose-dev.yml
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -65,12 +66,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 44 - ((33 * winheight(0) + 27) / 55)
+let s:l = 35 - ((27 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 44
-normal! 0
+keepjumps 35
+normal! 027|
 lcd ~/work/pingflow
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'

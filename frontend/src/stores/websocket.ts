@@ -4,6 +4,8 @@ import { io as socketio } from "socket.io-client";
 
 import type { SocketOptions, ManagerOptions } from "socket.io-client";
 
+import type { Error as APIError, API_OUT } from "@/types/api";
+
 const WEBSOCKET_OPTIONS: Partial<ManagerOptions & SocketOptions> = {
 	autoConnect: false,
 	reconnection: true,
@@ -21,10 +23,9 @@ export type IWorkerConfig = {
  */
 export const useWebsocket = defineStore("websocket", () => {
 	const WORKER_API_KEY = "call_api";
-	const websocket = ref(socketio(
-		`${import.meta.env.VITE_WEBSOCKET_URI}:${import.meta.env.VITE_WEBSOCKET_PORT}`,
-		WEBSOCKET_OPTIONS,
-	));
+	const websocket = ref(
+		socketio(`${import.meta.env.VITE_WEBSOCKET_URI}:${import.meta.env.VITE_WEBSOCKET_PORT}`, WEBSOCKET_OPTIONS),
+	);
 
 	websocket.value.on("error", error => {
 		console.error(`[WS Error]: A websocket error occured ${error}`);
@@ -34,12 +35,21 @@ export const useWebsocket = defineStore("websocket", () => {
 		websocket.value.emit(WORKER_API_KEY, JSON.stringify(config));
 	}
 
-	// Returns unparsed JSON
-	function ListenForResponse(): Promise<string> {
-		return new Promise(resolve => {
+	function ListenForResponse<T extends API_OUT>(): Promise<T> {
+		return new Promise((resolve, reject) => {
 			websocket.value.on(WORKER_API_KEY, result => {
 				websocket.value.off(WORKER_API_KEY);
-				return resolve(result);
+				try {
+					const json = JSON.parse(result);
+					if (json.error) {
+						console.error(json);
+						return reject(json as APIError);
+					}
+
+					return resolve(json as T);
+				} catch (error: unknown) {
+					return reject(error);
+				}
 			});
 		});
 	}

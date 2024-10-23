@@ -1,7 +1,7 @@
 <script setup lang="ts">
-	const { ws_state } = defineProps<{
-		ws_state: boolean
-	}>();
+const { ws_state } = defineProps<{
+	ws_state: boolean;
+}>();
 </script>
 
 <template>
@@ -36,10 +36,10 @@ nav {
 			width: 10px;
 			height: 10px;
 			background: red;
-			transition: background .75s;
+			transition: background 0.75s;
 
 			&.active {
-				background: #10bb10;
+				background: #1dc41d;
 			}
 		}
 	}

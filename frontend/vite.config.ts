@@ -14,8 +14,8 @@ export default defineConfig({
 		preprocessorOptions: {
 			sass: {
 				api: "modern",
-			}
-		}
+			},
+		},
 	},
 	plugins: [vue(), vueDevTools()],
 	resolve: {
