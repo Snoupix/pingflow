@@ -17,19 +17,6 @@ func ServeForever() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// TODO: Remove this since it since it can be migrated to the use of /api/:endpoint to get available parameters
-	server.GET("/classes", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"values": "[\"barbarian\", \"bard\", \"cleric\", \"druid\", \"fighter\", \"monk\", \"paladin\", \"ranger\", \"rogue\", \"sorcerer\", \"warlock\", \"wizard\"]",
-		})
-	})
-
-	server.GET("/sub-classes", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"values": "[\"berserker\", \"champion\", \"devotion\", \"draconic\", \"evocation\", \"fiend\", \"hunter\", \"land\", \"life\", \"lore\", \"open-hand\", \"thief\"]",
-		})
-	})
-
 	server.GET("/job-index", func(c *gin.Context) {
 		c.String(http.StatusOK, "%03d", utils.NewWorkIdx())
 	})

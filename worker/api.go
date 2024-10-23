@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 const API_BASE_URL = "https://www.dnd5eapi.co"
@@ -42,6 +43,8 @@ func FetchEndpoint(ctx context.Context, httpclient *http.Client, config WorkConf
 // Otherwise, it returns the parsed endpoint without the base and true
 func ParseEndpoint(config WorkConfig) (string, bool) {
 	// Potential attack vector; TODO: sanitize end result
+    config.endpoint = strings.TrimSuffix(config.endpoint, "/")
+
 	switch config.endpoint {
 	case API_RESOURCES, CLASSES, SUBCLASSES:
 		return config.endpoint + "/" + config.parameters, true
