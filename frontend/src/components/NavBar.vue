@@ -1,20 +1,48 @@
 <script setup lang="ts">
-const { ws_state } = defineProps<{
+import { ref, watch } from 'vue';
+
+import type { IColor } from '@/stores/websocket';
+
+const animation_str = "move-gradient 1.75s cubic-bezier(.79,.14,.15,.86) infinite";
+
+const props = defineProps<{
 	ws_state: boolean;
+	color: IColor | null;
 }>();
+
+const previous_color = ref<IColor | null>(null);
+
+watch(() => props.color, (_, prev) => previous_color.value = prev);
+
+function ParseColor(c: IColor): string {
+	return `rgb(${c.r}, ${c.g}, ${c.b})`;
+}
+
+function GetGradient(c: IColor): string {
+	const prev = previous_color.value == null ? "var(--color-text)" : ParseColor(previous_color.value);
+	const curr = ParseColor(c);
+
+	return `linear-gradient(to right in hsl shorter hue, ${prev}, ${curr})`;
+}
 </script>
 
 <template>
 	<nav>
-		<h2>Dungeons & Dragons Classes viewer</h2>
+		<h2 :style="{ background: props.color != null ? GetGradient(props.color) : 'var(--color-text)', animation: props.color != null ? animation_str : '' }">Dungeons & Dragons Classes viewer</h2>
 		<div class="status_wrapper">
-			<span>Status: <span v-if="ws_state">Connected</span><span v-else>Disconnected</span></span>
-			<div class="ws_status" :class="{ active: ws_state }"></div>
+			<span>Status: <span v-if="props.ws_state">Connected</span><span v-else>Disconnected</span></span>
+			<div class="ws_status" :class="{ active: props.ws_state }"></div>
 		</div>
 	</nav>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
+h2 {
+	color: transparent;
+	background-size: 200%;
+	background-clip: text!important;
+}
+
 nav {
 	height: 10vh;
 	display: flex;

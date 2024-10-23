@@ -1,1 +1,10 @@
 @use "base"
+
+@keyframes move-gradient
+	0%
+		background-position: right!important
+		// workaround since it's not moving the background
+		background-size: 200%
+	100%
+		background-position: left!important
+		background-size: 100%

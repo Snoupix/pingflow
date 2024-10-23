@@ -47,5 +47,14 @@ func main() {
 		}
 	}()
 
+	go func() {
+		pubsub := redis.Subscribe(ctx, GetEnv("REDIS_CH_COLOR_PROCESS"))
+		defer pubsub.Close()
+
+		for range pubsub.Channel() {
+			go ProcessColor(ctx, &httpclient)
+		}
+	}()
+
 	ServeForever()
 }

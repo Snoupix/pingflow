@@ -29,7 +29,9 @@ watch(api_err, err => {
 		selected_class.value = null;
 		class_spells.value = null;
 	}
-})
+});
+
+watch(ws.current_color, console.log);
 
 onMounted(() => {
 	ws.Connect();
@@ -79,7 +81,7 @@ function RemoveError() {
 
 <template>
 	<header>
-		<Navbar :ws_state="is_ws_connected" />
+		<Navbar :ws_state="is_ws_connected" :color="ws.current_color" />
 	</header>
 
 	<main>
@@ -113,7 +115,7 @@ function RemoveError() {
 </template>
 
 <style scoped lang="scss">
-h2 {
+h1, h2 {
 	width: 100%;
 	text-align: center;
 	padding: 5vh 0;

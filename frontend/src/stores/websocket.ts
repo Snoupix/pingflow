@@ -18,6 +18,12 @@ export type IWorkerConfig = {
 	parameters: string;
 };
 
+export type IColor = {
+	r: number;
+	g: number;
+	b: number;
+};
+
 /**
  * Don't forget to use the .connect() method
  */
@@ -26,9 +32,15 @@ export const useWebsocket = defineStore("websocket", () => {
 	const websocket = ref(
 		socketio(`${import.meta.env.VITE_WEBSOCKET_URI}:${import.meta.env.VITE_WEBSOCKET_PORT}`, WEBSOCKET_OPTIONS),
 	);
+	const current_color = ref<IColor | null>(null);
 
 	websocket.value.on("error", error => {
 		console.error(`[WS Error]: A websocket error occured ${error}`);
+	});
+
+	websocket.value.on("color", color => {
+		// Shouldn't ever throw
+		current_color.value = JSON.parse(color);
 	});
 
 	function CallAPI(config: IWorkerConfig) {
@@ -42,6 +54,10 @@ export const useWebsocket = defineStore("websocket", () => {
 				try {
 					const json = JSON.parse(result);
 					if (json.error) {
+						if (json.error == "timeout") { // TODO: Impl retry
+							return reject(json as APIError);
+						}
+
 						console.error(json);
 						return reject(json as APIError);
 					}
@@ -58,7 +74,7 @@ export const useWebsocket = defineStore("websocket", () => {
 		websocket.value.connect();
 	}
 
-	return { inner: websocket, CallAPI, ListenForResponse, Connect };
+	return { inner: websocket, current_color, CallAPI, ListenForResponse, Connect };
 });
 
 /*

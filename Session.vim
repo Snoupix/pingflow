@@ -42,7 +42,7 @@ badd +6 frontend/src/main.ts
 badd +51 frontend/src/stores/websocket.ts
 badd +1 frontend/src/stores/counter.ts
 badd +9 frontend/package.json
-badd +143 frontend/src/App.vue
+badd +92 frontend/src/App.vue
 badd +11 frontend/src/components/NavBar.vue
 badd +1 frontend/src/styles/main.sass
 badd +37 frontend/src/styles/base.sass
@@ -51,10 +51,10 @@ badd +3 frontend/.dockerignore
 badd +1 backend/Dockerfile
 badd +18 .env.docker
 badd +8 frontend/src/types/api.ts
-badd +79 frontend/src/components/ClassComponent.vue
+badd +23 frontend/src/components/ClassComponent.vue
 argglobal
 %argdel
-edit frontend/src/App.vue
+edit backend/main.ts
 argglobal
 balt frontend/src/components/ClassComponent.vue
 setlocal fdm=manual
@@ -67,11 +67,11 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 92 - ((27 * winheight(0) + 27) / 55)
+let s:l = 53 - ((46 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 92
+keepjumps 53
 normal! 0
 lcd ~/work/pingflow
 tabnext 1

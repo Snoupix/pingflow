@@ -43,6 +43,7 @@ const props = defineProps<{
 $border_radius: .5rem;
 
 h2 {
+	color: var(--color-text);
 	width: 100%;
 	text-align: center;
 }
