@@ -5,3 +5,31 @@ services:
             dockerfile: redis.Dockerfile
         ports:
             - "6379:6379"
+    worker:
+        build:
+            context: ./worker
+        depends_on:
+            - redis
+        ports:
+            - "8080:8080"
+        env_file:
+            - .env.docker
+            - .env
+    deno:
+        build:
+            context: ./backend
+        depends_on:
+            - redis
+            - worker
+        env_file:
+            - .env.docker
+            - .env
+        ports:
+            - 8081:8081
+
+# For data persistence
+# volumes:
+#     redis:
+#         name: redis
+#         external: true
+# Don't forget to `docker volume create --name redis`

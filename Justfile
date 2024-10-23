@@ -53,13 +53,12 @@ run-all:
     sed "s/^requirepass.*/requirepass HIDDEN/m" -i redis.conf
 
 # Uses .env REDIS_PASSWORD as a default user password
-[doc("Launches only Redis with docker compose for dev only")]
-redis:
+[doc("Launches everything but the frontend with docker compose for dev only")]
+dev:
     #!/usr/bin/env bash
     password=$(cat .env | grep "REDIS_PASSWORD" | grep -oE '".*"' | sed s/\"//g)
     sed "s/^requirepass.*/requirepass $password/m" -i redis.conf
-    docker compose -f docker-compose-dev.yml build
-    docker compose -f docker-compose-dev.yml up -d
+    docker compose -f docker-compose-dev.yml up -d --build --remove-orphans
     sed "s/^requirepass.*/requirepass HIDDEN/m" -i redis.conf
 
 # Alias of docker compose down
