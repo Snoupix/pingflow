@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
@@ -12,6 +13,8 @@ const API_BASE_URL = "https://www.dnd5eapi.co"
 const API_RESOURCES = "/api"
 const CLASSES = "/api/classes"
 const SUBCLASSES = "/api/subclasses"
+const SPELLS_REG = "/api/classes/[a-z]*/spells"
+const SPELLS_INFO_REG = "/api/spells/.*"
 
 func FetchEndpoint(ctx context.Context, httpclient *http.Client, config WorkConfig) (string, bool) {
 	enpoint, ok := ParseEndpoint(config)
@@ -48,6 +51,24 @@ func ParseEndpoint(config WorkConfig) (string, bool) {
 	switch config.endpoint {
 	case API_RESOURCES, CLASSES, SUBCLASSES:
 		return config.endpoint + "/" + config.parameters, true
+	default:
+		regex, err := regexp.Compile(SPELLS_REG)
+		if err != nil {
+			log.Panicf("Unreachable failed to compile SPELLS regex")
+		}
+
+		if regex.Match([]byte(config.endpoint)) {
+			return config.endpoint, true
+		}
+
+		regex, err = regexp.Compile(SPELLS_INFO_REG)
+		if err != nil {
+			log.Panicf("Unreachable failed to compile SPELLS regex")
+		}
+
+		if regex.Match([]byte(config.endpoint)) {
+			return config.endpoint, true
+		}
 	}
 
 	return "", false

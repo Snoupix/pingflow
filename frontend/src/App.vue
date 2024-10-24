@@ -5,7 +5,7 @@ import Navbar from "@/components/NavBar.vue";
 import ClassComponent from "@/components/ClassComponent.vue";
 import { useWebsocket, type IWorkerConfig } from "@/stores/websocket";
 
-import type { Error as APIError, Classes, Class, Spell, API_OUT_T, SpellResp } from "./types/api";
+import type { Error as APIError, Classes, Class, Spell, API_OUT_T, SpellResp, SpellInfo } from "./types/api";
 
 const default_cfg: IWorkerConfig & { _type: API_OUT_T } = {
 	endpoint: "/api/classes",
@@ -21,6 +21,7 @@ const api_resp = ref<Classes | null>(null);
 const api_err = ref<APIError | null>(null);
 const selected_class = ref<Class | null>(null);
 const class_spells = ref<Array<Spell> | null>(null);
+const spell_info = ref<SpellInfo | null>(null);
 
 watch(ws, w => (is_ws_connected.value = w.inner.connected));
 
@@ -30,8 +31,6 @@ watch(api_err, err => {
 		class_spells.value = null;
 	}
 });
-
-watch(ws.current_color, console.log);
 
 onMounted(() => {
 	ws.Connect();
@@ -66,6 +65,15 @@ function FetchAPI(cfg: IWorkerConfig & { _type: API_OUT_T }) {
 
 			ws.ListenForResponse<SpellResp>()
 				.then(resp => (class_spells.value = resp.results))
+				.catch(error => (api_err.value = error))
+				.finally(() => (is_loading.value = false));
+			break;
+		case "spellinfo":
+			spell_info.value = null;
+			is_loading.value = true;
+
+			ws.ListenForResponse<SpellInfo>()
+				.then(resp => (spell_info.value = resp))
 				.catch(error => (api_err.value = error))
 				.finally(() => (is_loading.value = false));
 			break;
@@ -109,7 +117,9 @@ function RemoveError() {
 		<ClassComponent
 			v-else-if="api_err == null && selected_class != null"
 			:_class="selected_class"
-			:FetchAPI="FetchAPI"
+			:FetchAPI
+			:ClearSpellInfo="() => (spell_info = null)"
+			:spell_info
 			:spells="class_spells" />
 	</main>
 </template>
@@ -148,7 +158,7 @@ h2 {
 		justify-content: center;
 		align-items: center;
 		width: 100%;
-		height: 10vh;
+		height: 50px;
 		cursor: pointer;
 		color: var(--color-text);
 		transition: all var(--transition-duration);

@@ -2,8 +2,8 @@ export type Error = {
 	error: string;
 };
 
-export type API_OUT_T = "classes" | "class" | "spells";
-export type API_OUT = Classes | Class | SpellResp;
+export type API_OUT_T = "classes" | "class" | "spells" | "spellinfo";
+export type API_OUT = Classes | Class | SpellResp | SpellInfo;
 
 export type Classes = {
 	count: number;
@@ -37,6 +37,36 @@ export type Spell = {
 	index: string;
 	name: string;
 	level: number;
+	url: string;
+};
+
+export type SpellInfo = {
+	higher_level: string[];
+	index: string;
+	name: string;
+	desc: string[];
+	range: string;
+	components: "V" | "S" | "M"[]; // List of shorthand for required components of the spell. V: verbal S: somatic M: material
+	ritual: boolean;
+	duration: string;
+	concentration: boolean;
+	casting_time: string;
+	level: number;
+	material?: string;
+	area_of_effect?: {
+		size: number;
+		type: ["sphere", "cone", "cylinder", "line", "cube"];
+	};
+	school: School;
+	classes: School[];
+	subclasses: Spell[];
+	url: string;
+};
+
+export type School = {
+	index: string;
+	level?: number;
+	name: string;
 	url: string;
 };
 

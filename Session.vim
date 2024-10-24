@@ -28,7 +28,7 @@ badd +44 Justfile
 badd +4 docker-compose-dev.yml
 badd +40 worker/redis.go
 badd +1 .env
-badd +14 worker/api.go
+badd +70 worker/api.go
 badd +24 worker/utils/env.go
 badd +12 worker/utils/work_index.go
 badd +2 .ignore
@@ -42,7 +42,7 @@ badd +6 frontend/src/main.ts
 badd +44 frontend/src/stores/websocket.ts
 badd +1 frontend/src/stores/counter.ts
 badd +9 frontend/package.json
-badd +34 frontend/src/App.vue
+badd +121 frontend/src/App.vue
 badd +6 frontend/src/components/NavBar.vue
 badd +7 frontend/src/styles/main.sass
 badd +37 frontend/src/styles/base.sass
@@ -50,13 +50,15 @@ badd +7 frontend/Dockerfile
 badd +3 frontend/.dockerignore
 badd +1 backend/Dockerfile
 badd +9 .env.docker
-badd +8 frontend/src/types/api.ts
-badd +47 frontend/src/components/ClassComponent.vue
+badd +1 frontend/src/types/api.ts
+badd +25 frontend/src/components/ClassComponent.vue
+badd +67 frontend/src/components/SpellsComponent.vue
+badd +26 frontend/src/components/SpellInfo.vue
 argglobal
 %argdel
-edit frontend/src/components/NavBar.vue
+edit frontend/src/components/SpellInfo.vue
 argglobal
-balt frontend/src/styles/main.sass
+balt frontend/src/components/SpellsComponent.vue
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -67,12 +69,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 6 - ((5 * winheight(0) + 27) / 55)
+let s:l = 30 - ((29 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 6
-normal! 041|
+keepjumps 30
+normal! 04|
 lcd ~/work/pingflow
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'

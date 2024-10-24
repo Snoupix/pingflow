@@ -1,18 +1,16 @@
 <script setup lang="ts">
-// import { ref } from 'vue';
+import SpellsComponent from "@/components/SpellsComponent.vue";
 
 import type { IWorkerConfig } from "@/stores/websocket";
-import type { API_OUT_T, Class, Spell } from "@/types/api";
+import type { API_OUT_T, Class, Spell, SpellInfo } from "@/types/api";
 
 const props = defineProps<{
 	_class: Class;
 	spells: Array<Spell> | null;
+	spell_info: SpellInfo | null;
 	FetchAPI: (config: IWorkerConfig & { _type: API_OUT_T }) => void;
+	ClearSpellInfo: () => void;
 }>();
-
-// TODO: subtype
-// const api_resp = ref<unknown | null>(null);
-// const api_err = ref<unknown | null>(null);
 </script>
 
 <template>
@@ -22,9 +20,12 @@ const props = defineProps<{
 			<template v-if="props._class.spellcasting != undefined">
 				<span>Spells</span>
 				<div>
-					<button @click="props.FetchAPI({ endpoint: props._class.spells, parameters: '', _type: 'spells' })">
-						Fetch spells
-					</button>
+					<SpellsComponent
+						:FetchAPI="props.FetchAPI"
+						:ClearSpellInfo="props.ClearSpellInfo"
+						:spells_endpoint="props._class.spells"
+						:spells="props.spells"
+						:spell_info="props.spell_info" />
 				</div>
 
 				<template v-for="({ name, desc }, i) in props._class.spellcasting!.info" :key="i">
