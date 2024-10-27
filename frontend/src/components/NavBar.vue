@@ -1,20 +1,29 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, useTemplateRef, watch } from "vue";
 
 import type { IColor } from "@/stores/websocket";
 
-const animation_str = "move-gradient 1.75s cubic-bezier(.79,.14,.15,.86) infinite";
+const animation_str = "move-gradient 2s cubic-bezier(.79,.14,.15,.86) infinite";
 
 const props = defineProps<{
 	ws_state: boolean;
 	color: IColor | null;
 }>();
 
+const title_ref = useTemplateRef<HTMLElement>("title_ref");
 const previous_color = ref<IColor | null>(null);
 
 watch(
 	() => props.color,
-	(_, prev) => (previous_color.value = prev),
+	(_, prev) => {
+		previous_color.value = prev
+
+		if (title_ref.value != null) {
+			title_ref.value.style.animation = "none";
+			title_ref.value.getClientRects(); // Triggers reflow
+			title_ref.value.style.animation = ""; // Inherits back to CSS
+		}
+	},
 );
 
 function ParseColor(c: IColor): string {
@@ -32,6 +41,7 @@ function GetGradient(c: IColor): string {
 <template>
 	<nav>
 		<h2
+			ref="title_ref"
 			:style="{
 				background: props.color != null ? GetGradient(props.color) : 'var(--color-text)',
 				animation: props.color != null ? animation_str : '',
