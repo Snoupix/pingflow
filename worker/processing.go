@@ -54,13 +54,12 @@ func ProcessWork(ctx context.Context, httpclient *http.Client, work_id string) {
 	output, ok := cache[config.endpoint]
 	if !ok {
 		output, ok = FetchEndpoint(ctx, httpclient, config)
+        // If ok is false, it just means that there is a config parsing error, else it will panic
 
 		if ok {
 			// Caching a request result with "endpointparameters" concatenated as a key so
 			// the same request has the same result
 			cache.Store(ctx, client, config.endpoint+config.parameters, output)
-		} else {
-			// TODO: Handle http fetch error
 		}
 	}
 
