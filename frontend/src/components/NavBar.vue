@@ -69,7 +69,7 @@ nav {
 	align-items: center;
 	justify-content: space-between;
 	padding: 0 2.5vw;
-	background: var(--color-background-soft);
+	border-bottom: 5px solid var(--color-background-soft);
 
 	.status_wrapper {
 		display: flex;

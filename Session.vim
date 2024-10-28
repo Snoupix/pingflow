@@ -39,11 +39,10 @@ badd +48 backend/integration_test.ts
 badd +53 backend/ws_client_test.ts
 badd +10 frontend/vite.config.ts
 badd +6 frontend/src/main.ts
-badd +44 frontend/src/stores/websocket.ts
-badd +1 frontend/src/stores/counter.ts
+badd +43 frontend/src/stores/websocket.ts
 badd +9 frontend/package.json
-badd +121 frontend/src/App.vue
-badd +6 frontend/src/components/NavBar.vue
+badd +59 frontend/src/App.vue
+badd +18 frontend/src/components/NavBar.vue
 badd +7 frontend/src/styles/main.sass
 badd +37 frontend/src/styles/base.sass
 badd +7 frontend/Dockerfile
@@ -51,14 +50,15 @@ badd +3 frontend/.dockerignore
 badd +1 backend/Dockerfile
 badd +9 .env.docker
 badd +1 frontend/src/types/api.ts
-badd +25 frontend/src/components/ClassComponent.vue
-badd +67 frontend/src/components/SpellsComponent.vue
-badd +26 frontend/src/components/SpellInfo.vue
+badd +22 frontend/src/components/ClassComponent.vue
+badd +43 frontend/src/components/SpellsComponent.vue
+badd +28 frontend/src/components/SpellInfo.vue
+badd +19 frontend/src/stores/fetcher.ts
 argglobal
 %argdel
-edit frontend/src/components/SpellInfo.vue
+edit frontend/src/components/SpellsComponent.vue
 argglobal
-balt frontend/src/components/SpellsComponent.vue
+balt frontend/src/stores/fetcher.ts
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -69,12 +69,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 30 - ((29 * winheight(0) + 27) / 55)
+let s:l = 39 - ((38 * winheight(0) + 27) / 55)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 30
-normal! 04|
+keepjumps 39
+normal! 065|
 lcd ~/work/pingflow
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'

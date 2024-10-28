@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import SpellsComponent from "@/components/SpellsComponent.vue";
 
-import type { IWorkerConfig } from "@/stores/websocket";
-import type { API_OUT_T, Class, Spell, SpellInfo } from "@/types/api";
+import { useWebsocket } from "@/stores/websocket";
+import type { Class } from "@/types/api";
 
 const props = defineProps<{
 	_class: Class;
-	spells: Array<Spell> | null;
-	spell_info: SpellInfo | null;
-	FetchAPI: (config: IWorkerConfig & { _type: API_OUT_T }) => void;
-	ClearSpellInfo: () => void;
+	ws: ReturnType<typeof useWebsocket>;
 }>();
 </script>
 
@@ -21,11 +18,8 @@ const props = defineProps<{
 				<span>Spells</span>
 				<div>
 					<SpellsComponent
-						:FetchAPI="props.FetchAPI"
-						:ClearSpellInfo="props.ClearSpellInfo"
-						:spells_endpoint="props._class.spells"
-						:spells="props.spells"
-						:spell_info="props.spell_info" />
+						:ws="props.ws"
+						:spells_endpoint="props._class.spells" />
 				</div>
 
 				<template v-for="({ name, desc }, i) in props._class.spellcasting!.info" :key="i">

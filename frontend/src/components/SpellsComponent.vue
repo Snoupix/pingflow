@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 import SpellInfoComponent from "@/components/SpellInfo.vue";
 
-import type { IWorkerConfig } from "@/stores/websocket";
-import type { API_OUT_T, Spell, SpellInfo } from "@/types/api";
+import { useFetcher } from "@/stores/fetcher";
+import { useWebsocket, type IWorkerConfig } from "@/stores/websocket";
+import type { SpellInfo, SpellResp } from "@/types/api";
 
 const props = defineProps<{
 	spells_endpoint: string;
-	spells: Array<Spell> | null;
-	spell_info: SpellInfo | null;
-	FetchAPI: (config: IWorkerConfig & { _type: API_OUT_T }) => void;
-	ClearSpellInfo: () => void;
+	ws: ReturnType<typeof useWebsocket>;
 }>();
 
+const { Fetch } = useFetcher();
+const spells = ref<SpellResp | null>(null);
+const spell_info = ref<SpellInfo | null>(null);
 const processed_spells = ref<Map<number, Array<{ url: string; name: string }>>>(new Map());
 
-if (props.spells != null) {
-	props.spells.forEach(spell => {
+watch(spells, s => {
+	if (s == null) return;
+
+	s.results.forEach(spell => {
 		const array = processed_spells.value.get(spell.level);
 		if (array == undefined) {
 			processed_spells.value.set(spell.level, [{ ...spell }]);
@@ -27,17 +30,25 @@ if (props.spells != null) {
 		array.push({ ...spell });
 		processed_spells.value.set(spell.level, array);
 	});
+});
+
+function FetchSpells(cfg: IWorkerConfig) {
+	Fetch(props.ws, spells, cfg);
+}
+
+function FetchSpellInfo(cfg: IWorkerConfig) {
+	Fetch(props.ws, spell_info, cfg);
 }
 </script>
 
 <template>
-	<div v-if="props.spell_info != null">
-		<SpellInfoComponent :spell_info="props.spell_info" />
-		<button class="close_info" @click="props.ClearSpellInfo()">Close</button>
+	<div v-if="spell_info != null">
+		<SpellInfoComponent :spell_info />
+		<button class="close_info" @click="() => spell_info = null">Close</button>
 	</div>
 	<button
-		v-else-if="props.spells == null"
-		@click="props.FetchAPI({ endpoint: props.spells_endpoint, parameters: '', _type: 'spells' })">
+		v-else-if="spells == null"
+		@click="FetchSpells({ endpoint: props.spells_endpoint, parameters: '' })">
 		Fetch spells
 	</button>
 	<div v-else class="spell_grid">
@@ -47,7 +58,7 @@ if (props.spells != null) {
 				class="spell"
 				v-for="({ url, name }, j) in names"
 				:key="j"
-				@click="FetchAPI({ endpoint: url, parameters: '', _type: 'spellinfo' })">
+				@click="FetchSpellInfo({ endpoint: url, parameters: '' })">
 				{{ name }}
 			</button>
 		</div>

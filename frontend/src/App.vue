@@ -1,89 +1,47 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 
 import Navbar from "@/components/NavBar.vue";
 import ClassComponent from "@/components/ClassComponent.vue";
+import { useFetcher } from "@/stores/fetcher";
 import { useWebsocket, type IWorkerConfig } from "@/stores/websocket";
 
-import type { Error as APIError, Classes, Class, Spell, API_OUT_T, SpellResp, SpellInfo } from "./types/api";
+import type { Classes, Class } from "@/types/api";
 
-const default_cfg: IWorkerConfig & { _type: API_OUT_T } = {
+const default_cfg: IWorkerConfig = {
 	endpoint: "/api/classes",
 	parameters: "",
-	_type: "classes",
 } as const;
 
 const ws = useWebsocket();
+const _fetcher = useFetcher();
+const { error, is_loading } = storeToRefs(_fetcher);
+const { Fetch } = _fetcher;
 const is_ws_connected = ref(false);
-const is_loading = ref(false);
-const config = ref<IWorkerConfig>(default_cfg);
-const api_resp = ref<Classes | null>(null);
-const api_err = ref<APIError | null>(null);
+const classes = ref<Classes | null>(null);
 const selected_class = ref<Class | null>(null);
-const class_spells = ref<Array<Spell> | null>(null);
-const spell_info = ref<SpellInfo | null>(null);
 
 watch(ws, w => (is_ws_connected.value = w.inner.connected));
 
-watch(api_err, err => {
+watch(error, err => {
 	if (err != null) {
 		selected_class.value = null;
-		class_spells.value = null;
 	}
 });
 
 onMounted(() => {
 	ws.Connect();
-	FetchAPI(default_cfg);
+	Fetch(ws, classes, default_cfg);
 });
 
-function FetchAPI(cfg: IWorkerConfig & { _type: API_OUT_T }) {
-	config.value = cfg;
-
-	ws.CallAPI(cfg);
-
-	// Implicitly not awaiting it so the result is stored concurrently
-	switch (cfg._type) {
-		case "classes":
-			ws.ListenForResponse<Classes>()
-				.then(resp => (api_resp.value = resp))
-				.catch(error => (api_err.value = error));
-			break;
-		case "class":
-			selected_class.value = null;
-			class_spells.value = null;
-			is_loading.value = true;
-
-			ws.ListenForResponse<Class>()
-				.then(resp => (selected_class.value = resp))
-				.catch(error => (api_err.value = error))
-				.finally(() => (is_loading.value = false));
-			break;
-		case "spells":
-			class_spells.value = null;
-			is_loading.value = true;
-
-			ws.ListenForResponse<SpellResp>()
-				.then(resp => (class_spells.value = resp.results))
-				.catch(error => (api_err.value = error))
-				.finally(() => (is_loading.value = false));
-			break;
-		case "spellinfo":
-			spell_info.value = null;
-			is_loading.value = true;
-
-			ws.ListenForResponse<SpellInfo>()
-				.then(resp => (spell_info.value = resp))
-				.catch(error => (api_err.value = error))
-				.finally(() => (is_loading.value = false));
-			break;
-		default:
-			console.error("Unexpected error: API output _type not handled", cfg);
-	}
+function FetchClass(config: IWorkerConfig) {
+	selected_class.value = null;
+	Fetch(ws, selected_class, config);
 }
 
 function RemoveError() {
-	api_err.value = null;
+	error.value = null;
 }
 </script>
 
@@ -93,34 +51,32 @@ function RemoveError() {
 	</header>
 
 	<main>
-		<h2 v-if="selected_class == null">Choose a class to fetch</h2>
+		<h2 v-if="selected_class == null && !is_loading">Choose a class to fetch</h2>
 
-		<div v-if="api_err != null" class="error">
-			<h3>{{ api_err.error || api_err }}</h3>
+		<div v-if="error != null" class="error">
+			<h3>{{ error.error || error }}</h3>
 			<button @click="RemoveError()">Close</button>
 		</div>
 
-		<section class="classes_wrapper" v-else-if="api_resp != null">
+		<section v-else-if="classes != null" class="classes_wrapper">
 			<button
-				v-for="resp in api_resp.results"
+				v-for="resp in classes.results"
 				:key="resp.index"
 				:class="{ selected: selected_class && resp.url == selected_class.url }"
 				@click="
-					FetchAPI({ endpoint: resp.url.replace(resp.index, ''), parameters: resp.index, _type: 'class' })
+					FetchClass({ endpoint: resp.url.replace(resp.index, ''), parameters: resp.index })
 				">
 				{{ resp.name }}
 			</button>
 		</section>
 
 		<!-- Loading display + force rerender child on change -->
+		<!-- NOTE: Since ClassComponent has state, rerender it on loading f*cks its state -->
 		<h1 v-if="is_loading">Loading...</h1>
 		<ClassComponent
-			v-else-if="api_err == null && selected_class != null"
+			v-if="error == null && selected_class != null"
 			:_class="selected_class"
-			:FetchAPI
-			:ClearSpellInfo="() => (spell_info = null)"
-			:spell_info
-			:spells="class_spells" />
+			:ws />
 	</main>
 </template>
 
